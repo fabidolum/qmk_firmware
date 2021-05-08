@@ -18,7 +18,8 @@
 
 #define LR_BASE 0      // almost original layer: qwerty
 #define LR_BEPO 1      // bépo layer with bepo keymap
-//#define LR_ASC_BEPO   // bépo layer with Canadian Multilguage (ASC)
+//#define LR_ASC_BEPO   // same as bépo but using with Canadian Multilguage (ASC)
+//#define LR_BEPO_SFT
 #define LR_BASE_FN 2   // original fn layer
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -39,7 +40,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * |---------------------------------------------------------------------------------------------------------------------------------|
    */
   [LR_BASE] = LAYOUT(
-		KC_ESC,  KC_F1,   KC_F2, KC_F3,  KC_F4,  KC_F5,   KC_F6,   KC_F7, KC_F8,  KC_F9,   KC_F10, KC_F11,  KC_F12,  KC_DEL,  TG(LR_BEPO),
+		KC_ESC,  KC_F1,   KC_F2, KC_F3,  KC_F4,  KC_F5,   KC_F6,   KC_F7, KC_F8,  KC_F9,   KC_F10, KC_F11,  KC_F12,  KC_DEL,  KC_PSCR,
 		KC_GRV,  KC_1,    KC_2,  KC_3,   KC_4,   KC_5,             KC_6,   KC_7,  KC_8,    KC_9,   KC_0,    KC_MINS, KC_EQL,  KC_BSPC,
 		KC_TAB,  KC_Q,    KC_W,  KC_E,   KC_R,   KC_T,    KC_Y,    KC_U,  KC_I,   KC_O,    KC_P,   KC_LBRC, KC_RBRC, KC_BSLS, KC_PGUP,
 		KC_CAPS, KC_A,    KC_S,  KC_D,   KC_F,   KC_G,    KC_BSPC, KC_H,  KC_J,   KC_K,    KC_L,   KC_SCLN, KC_QUOT, KC_ENT,  KC_PGDN,
@@ -47,15 +48,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 		KC_LCTL, KC_LGUI, KC_LALT,       KC_SPC, KC_LCTL, KC_LSFT, KC_SPC,        KC_RALT, MO(LR_BASE_FN),  KC_RCTL, KC_LEFT, KC_DOWN, KC_RGHT),
   /* changes:
    * MO(1) => MO(LR_BASE_FN)
-   * KC_PSCR => TG(LR_BEPO)
    */
   [LR_BASE_FN] = LAYOUT(
-    RESET,     KC_TRNS, KC_TRNS, KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_CALC,   KC_MYCM,  KC_MSEL,   KC_MAIL,   NK_TOGG,   EEP_RST,
+    RESET,     TG(LR_BEPO), KC_TRNS, KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_CALC,   KC_MYCM,  KC_MSEL,   KC_MAIL,   NK_TOGG,   EEP_RST,
     KC_TRNS,   KC_TRNS, KC_TRNS, KC_TRNS,  KC_TRNS,  KC_TRNS,             KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,  KC_TRNS,   KC_TRNS,   KC_TRNS,   KC_NLCK,
     RGB_TOG,   RGB_MOD, RGB_VAI, RGB_HUI,  KC_TRNS,  KC_TRNS,   KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,  KC_TRNS,   KC_TRNS,   KC_TRNS,   KC_HOME,
     KC_TRNS,   RGB_SPD, RGB_VAD, RGB_SPI,  KC_TRNS,  KC_TRNS,   KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,  KC_TRNS,   KC_TRNS,   KC_TRNS,   KC_END,
     KC_TRNS,   KC_TRNS, KC_TRNS, KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,  KC_TRNS,   KC_MUTE,   KC_VOLU,
     KC_TRNS,   KC_TRNS, KC_TRNS,           KC_TRNS,  KC_TRNS,   KC_TRNS,  KC_TRNS,            KC_TRNS,   KC_TRNS,  KC_MPLY,   KC_MPRV,   KC_VOLD,   KC_MNXT),
+  /* changes:
+    F1 (TRS) : TG(LR_BEPO)
+  */
 
 /* Original bépo (keymap_bepo.h)
  * ┌───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───────┐
@@ -177,7 +180,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [LR_BEPO] = LAYOUT(
 		KC_ESC,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7, KC_F8,  KC_F9,   KC_F10, KC_F11,  KC_F12,  KC_DEL,  TG(LR_BEPO),
 		BP_DLR,  BP_DQUO, BP_LABK, BP_RABK, BP_LPRN, BP_RPRN,          BP_AT, BP_PLUS, BP_MINS,  BP_SLSH, BP_ASTR,  BP_EQL, BP_PERC,  KC_BSPC,
-		KC_TAB,  BP_B,    BP_EACU, BP_P,    BP_O,    BP_EGRV,          BP_W,   BP_V,  BP_D,    BP_L,   BP_J,    KC_LBRC, KC_RBRC, KC_BSLS, KC_PGUP,
+		KC_TAB,  BP_B,    BP_EACU, BP_P,    BP_O,    BP_EGRV,          BP_W,   BP_V,  BP_D,    BP_L,   BP_J,    BP_Z, BP_DCIR, BP_BSLS, KC_PGUP,
 		KC_CAPS, BP_A,    BP_U,    BP_I,    BP_E,    BP_COMM, KC_BSPC, BP_C,   BP_T,  BP_S,    BP_R,   BP_N,    BP_M,    KC_ENT,  KC_PGDN,
 		KC_LSFT, BP_AGRV, BP_Y,    BP_X,    BP_DOT,  BP_K,    KC_ENT,  BP_QUOT, BP_Q,  BP_G,    BP_H,   BP_F,    BP_CCED, KC_UP,
 		KC_LCTL, KC_LGUI, KC_LALT,       KC_SPC, KC_LCTL, KC_LSFT, KC_SPC,        KC_RALT, MO(LR_BASE_FN),  KC_RCTL, KC_LEFT, KC_DOWN, KC_RGHT)
@@ -219,7 +222,7 @@ moved from bepo : ^ (removed), W, ç, ê
   AltGr
   “´~#{[|`\^@]}
   âå€çþýûîô¶~ê
-  ÂøÊ±æðÛÎÔ¹²³
+  
   |«»©®ß¬¿×÷¡
   */
 
