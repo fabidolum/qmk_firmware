@@ -90,6 +90,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 	KC_LCTL, KC_LGUI, KC_LALT,       KC_SPC, KC_LCTL, KC_LSFT, KC_SPC,        KC_RALT, MO(LR_BASE_FN),  KC_RCTL, KC_LEFT, KC_DOWN, KC_RGHT),
   /* changes:
    * MO(1) => MO(LR_BASE_FN)
+   * PrtScr => toggle bepo layer on/off
    */
   [LR_BASE_FN] = LAYOUT(
     RESET,     KC_TRNS, KC_TRNS, KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_CALC,   KC_MYCM,  KC_MSEL,   KC_MAIL,   NK_TOGG,   EEP_RST,
@@ -174,7 +175,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    *    « »  replaced by < >
    *    ' is single quote (not typographic) 
    *    w and ^ are swapped
-   *    ç moved 
+   *    ç moved (replacing the right shift , keeping only the one which is available under the thumb )
    *    ` and $
    * added to bépo : \
    */
@@ -345,6 +346,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     switch (biton32(state)){
     case LR_CA_BEPO:
     case LR_CA_BEPO_SFT:
+        rgb_matrix_mode(RGB_MATRIX_SOLID_COLOR);
         rgb_matrix_sethsv_noeeprom(HSV_TEAL);
         //rgb_matrix_sethsv_noeeprom(0xF0, 0xF0, 0xF0);
         break;
@@ -352,6 +354,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
         //rgb_matrix_set_color_all (0xFF,  0x00, 0x00);
         break;
     default: //  for any other layers, or the default layer
+        rgb_matrix_mode(RGB_MATRIX_SOLID_COLOR);
         rgb_matrix_sethsv_noeeprom(HSV_GOLD);
         break;
     }
