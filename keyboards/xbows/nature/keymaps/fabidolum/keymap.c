@@ -41,6 +41,12 @@
 */
 
 enum macros {
+    // Characters that do not exist in CSA and must be implemented based on CP1252 support
+    // Note: these are intentionally declared first to be used as indexes in cp1252_chars below
+    CP_NDSH, // –
+    CP_MDSH, // —
+    CP_ELPS, // …
+    END_UC, // indicates the last unicode character macro
     M_CA_SFT, // toggle Shift on LR_CA_BEPO
     M_1,
     M_2,
@@ -61,8 +67,15 @@ enum macros {
 // call CA macro
 #define CA(name)   M(M_CA_##name)  
 
+const uint16_t cp1252_chars[] = {
+        [CP_NDSH] = 0x96,
+        [CP_MDSH] = 0x97,
+        [CP_ELPS] = 0x85,
+};
+
 /* shortcut for CP1252 character macros */
-//#define MCP(name)   M(CP_##name)    // calls a unicode macro
+#define MCP(name)   M(CP_##name)    // calls a unicode macro
+
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   /* Keymap VANILLA: (Base Layer) Default Layer
@@ -203,13 +216,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * |---------------------------------------------------------------------------------------------------------------------------------|
    * | Esc |  F1  |  F2  |  F3  |  F4  |      F5  |  F6  |  F7  |  F8  |      F9  |  F10 |  F11 |  F12 |   Delete   |    Toggle BEPO    |
    * |---------------------------------------------------------------------------------------------------------------------------------|
-   * |     |         |       |       |       |           |            |         |        |      |      |      |     |  Backspace  |
+   * |     |         |       |       |       |           |      {     |     }   |    [  |   ]  |      |      |     |  Backspace  |
    * |---------------------------------------------------------------------------------------------------------------------------------|
    * | Tab |        |     |   &  |   Œ  |      |       |            |        |        |       |      |      |      |     |      | PgUp |
    * |---------------------------------------------------------------------------------------------------------------------------------|
    * | Ctl |   Æ   |   ù  |      |   €   |      |      Bksp      |       |        |      |      |      |     |    Enter   | PgDn |
    * |---------------------------------------------------------------------------------------------------------------------------------|
-   * |Shift|      |      |      |      |      |       Enter       |       |        |     |      |     |      |      |  Up |
+   * |Shift|      |      |      |   …  |      |       Enter       |       |        |     |      |     |      |      |  Up |
    * |---------------------------------------------------------------------------------------------------------------------------------|
    * |Ctrl | GUI |     Alter   |      _     |   Ctrl   |   Shift   |               |    Alter   |  FN  | Ctrl | Lft  |  Dn |  Rig |
    * |---------------------------------------------------------------------------------------------------------------------------------|
@@ -220,7 +233,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [LR_CA_BEPO] = LAYOUT(
     _______,  _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,      _______,          _______,
-     CA_GRV,  CA_DQUO, CA_LCBR, CA_RCBR, CA_LBRC, CA_RBRC,                     CA_AT, CA_PLUS, CA_MINS, CA_SLSH, CA_ASTR,   CA_EQL, KC_DLR,      KC_BSPC,
+     CA_GRV,  CA_DQUO, CA_LABK, CA_RABK, CA_LPRN, CA_RPRN,                     CA_AT, CA_PLUS, CA_MINS, CA_SLSH, CA_ASTR,   CA_EQL, KC_DLR,      KC_BSPC,
     _______,     KC_B, CA_EACU,    KC_P,    KC_O, CA_EGRV,                      KC_W,    KC_V,    KC_D,    KC_L,    KC_J,     KC_Z, CA_CIRC, CA_BSLS, _______,
     _______,     KC_A,    KC_U,    KC_I,    KC_E, KC_COMM,       _______,       KC_C,    KC_T,    KC_S,    KC_R,    KC_N,     KC_M,      KC_ENT,      KC_PGDN,
     CA(SFT),  CA_AGRV,    KC_Y,    KC_X,  KC_DOT,    KC_K,       _______,     CA_QUOT,    KC_Q,    KC_G,    KC_H,    KC_F,  CA_CCED,            KC_UP,
@@ -235,12 +248,12 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     _______,   _______,      _______,          _______,       _______, _______,      _______,           _______,    _______,   _______, _______,   _______, _______),
     //
   [LR_CA_BEPO_AGR] = LAYOUT(
-    _______,  _______, _______, _______, _______, _______, _______, _______, _______,  _______, _______, _______, _______,       _______,        _______,
-    _______,  _______, _______, _______, _______, _______,                   _______,  _______, _______, _______, _______, _______, _______,     _______,
-    _______,  _______, _______, KC_AMPR,   CA_OE, _______,                   _______,  _______, _______, _______, _______, _______, _______, _______, _______,
-    _______,    CA_AE, CA_UGRV, _______, CA_EURO, _______,      _______,     _______,  _______, _______, _______, _______, _______,     _______,      _______,
-    _______,  _______, _______, _______, _______, _______,      _______,     _______,  _______, _______, _______, _______, _______,          _______,
-    _______,  _______,      _______,     KC_UNDS,          _______, _______,      KC_UNDS,           _______,     _______, _______, _______, _______, _______)
+    _______,  _______, _______, _______,   _______, _______, _______, _______, _______,  _______, _______, _______, _______,       _______,        _______,
+    _______,  _______, _______, _______,   _______, _______,                   CA_LCBR,  CA_RCBR, CA_LBRC, CA_RBRC, _______, _______, _______,     _______,
+    _______,  _______, _______, KC_AMPR,     CA_OE, _______,                   _______,  _______, _______, _______, _______, _______, _______, _______, _______,
+    _______,    CA_AE, CA_UGRV, _______,   CA_EURO, _______,      _______,     _______,  _______, _______, _______, _______, _______,     _______,      _______,
+    _______,  _______, _______, _______, MCP(ELPS), _______,      _______,     _______,  _______, _______, _______, _______, _______,          _______,
+    _______,  _______,      _______,       KC_UNDS,          _______, _______,      KC_UNDS,           _______,     _______, _______, _______, _______, _______)
 };
 
 void hold_shift(void) {
@@ -293,6 +306,11 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
 {
   // MACRODOWN only works in this function
     switch(id) {
+        case 0 ... END_UC:
+            if (record->event.pressed) {
+                send_cp1252(cp1252_chars[id]);
+            }
+            break;
         case M_CA_SFT:
             // BÉPO over CA: toggle shift layer
             layer_invert(LR_CA_BEPO_SFT);
