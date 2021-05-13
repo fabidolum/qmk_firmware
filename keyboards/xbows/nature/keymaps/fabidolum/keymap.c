@@ -54,7 +54,6 @@ enum macros {
     M_0,
     M_DEGR,
     M_SCLN,
-    M_GRV,
     M_PIPE,
 };
 
@@ -301,7 +300,6 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
         case M_1 ... M_0:
         case M_DEGR:
         case M_SCLN:
-        case M_GRV:
         case M_PIPE:
             // macros of the shift layer that require to release shift
             if (record->event.pressed) {
@@ -314,16 +312,8 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
                         return MACRO(DOWN(KC_ALGR), D(SCLN), END);
                     case M_SCLN:
                         return MACRO(D(SCLN), END);
-                    case M_GRV:
-                        //send_cp1252(0x60);
-                        //break;
-                        register_code(KC_GRV);
-                        unregister_code(KC_GRV);
-                        break;
                     case M_PIPE:
                         return MACRO(DOWN(KC_ALGR), D(GRV), END);
-                        //register_code(KC_PIPE);
-                        //break;
                 }
             } else {
                 sync_shift_with_csa_layer();
@@ -337,8 +327,6 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
                         return MACRO(U(SCLN), END);
                     case M_PIPE:
                         return MACRO(UP(KC_ALGR), U(GRV), END);
-                        //unregister_code(KC_PIPE);
-                        //break;
                 } 
             }
             break;
