@@ -14,6 +14,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include QMK_KEYBOARD_H
+#include "debug.h"
+#include "action_layer.h"
+#include "action_util.h"
 #include "keymap_extras/keymap_canadian_multilingual.h"
 
 /* purpose:
@@ -26,19 +29,19 @@
  * Keep the original (X-bows nature) Fn layer, except the F1 key to toggle between layouts
  */
 
-#define LR_BASE 0          // almost original layer: qwerty
-#define LR_ASC_BEPO 1      // same as bépo but using Canadian Multilguage (ASC)
-#define LR_ASC_BEPO_SFT 2  // shifted
-#define LR_ASC_BEPO_AGR_SFT 3
-//#define LR_BEPO_SFT
-#define LR_BASE_FN 4   // original fn layer
+#define LR_BASE 0         // almost original layer: qwerty
+#define LR_CA_BEPO 1      // same as bépo but using Canadian Multilanguage (CA)
+#define LR_CA_BEPO_SFT 2  // shifted
+#define LR_CA_BEPO_AGR 3  // alt-gr
+#define LR_CA_BEPO_AGR_SFT 4
+#define LR_BASE_FN 5   // original fn layer
 
 /* note : massively inspired from:
   https://github.com/DidierLoiseau/qmk_firmware/blob/bepo_csa-update/layouts/community/ergodox/bepo_csa/keymap.c
 */
 
 enum macros {
-    M_CSA_SFT, // toggle Shift on LR_ASC_BEPO
+    M_CA_SFT, // toggle Shift on LR_CA_BEPO
     M_1,
     M_2,
     M_3,
@@ -52,8 +55,14 @@ enum macros {
     M_DEGR,
     M_SCLN,
     M_GRV,
+    M_PIPE,
 };
-#define CSA(name)   M(M_CSA_##name)  
+
+// call CA macro
+#define CA(name)   M(M_CA_##name)  
+
+/* shortcut for CP1252 character macros */
+//#define MCP(name)   M(CP_##name)    // calls a unicode macro
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   /* Keymap VANILLA: (Base Layer) Default Layer
@@ -73,7 +82,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * |---------------------------------------------------------------------------------------------------------------------------------|
    */
   [LR_BASE] = LAYOUT(
-	KC_ESC,  KC_F1,   KC_F2, KC_F3,  KC_F4,  KC_F5,   KC_F6,   KC_F7, KC_F8,  KC_F9,   KC_F10, KC_F11,  KC_F12,  KC_DEL,  TG(LR_ASC_BEPO),
+	KC_ESC,  KC_F1,   KC_F2, KC_F3,  KC_F4,  KC_F5,   KC_F6,   KC_F7, KC_F8,  KC_F9,   KC_F10, KC_F11,  KC_F12,  KC_DEL,  TG(LR_CA_BEPO),
 	KC_GRV,  KC_1,    KC_2,  KC_3,   KC_4,   KC_5,             KC_6,   KC_7,  KC_8,    KC_9,   KC_0,    KC_MINS, KC_EQL,  KC_BSPC,
 	KC_TAB,  KC_Q,    KC_W,  KC_E,   KC_R,   KC_T,    KC_Y,    KC_U,  KC_I,   KC_O,    KC_P,   KC_LBRC, KC_RBRC, KC_BSLS, KC_PGUP,
 	KC_CAPS, KC_A,    KC_S,  KC_D,   KC_F,   KC_G,    KC_BSPC, KC_H,  KC_J,   KC_K,    KC_L,   KC_SCLN, KC_QUOT, KC_ENT,  KC_PGDN,
@@ -150,7 +159,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * |---------------------------------------------------------------------------------------------------------------------------------|
    * | Esc |  F1  |  F2  |  F3  |  F4  |      F5  |  F6  |  F7  |  F8  |      F9  |  F10 |  F11 |  F12 |   Delete   |    Toggle BEPO    |
    * |---------------------------------------------------------------------------------------------------------------------------------|
-   * |  $  |     "   |   <   |   >   |   (   |    )      |       @    |    +    |    -   |   /  |   *  |   =  |  %  |  Backspace  |
+   * |  `  |     "   |   <   |   >   |   (   |    )      |       @    |    +    |    -   |   /  |   *  |   =  |  $  |  Backspace  |
    * |---------------------------------------------------------------------------------------------------------------------------------|
    * | Tab |   B    |    É   |   P  |   O  |   È  |            |    W   |    V   |    D  |   L  |   J  |   Z  |  ^  |   \  | PgUp |
    * |---------------------------------------------------------------------------------------------------------------------------------|
@@ -160,12 +169,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * |---------------------------------------------------------------------------------------------------------------------------------|
    * |Ctrl | GUI |     Alter   |    Space   |   Ctrl   |   Shift   |     Space     |    Alter   |  FN  | Ctrl | Lft  |  Dn |  Rig |
    * |---------------------------------------------------------------------------------------------------------------------------------|
-   * removed from bépo : ê
+   * removed from bépo : ê, %
    * changed from bépo : 
    *    « »  replaced by < >
    *    ' is single quote (not typographic) 
    *    w and ^ are swapped
    *    ç moved 
+   *    ` and $
    * added to bépo : \
    */
   /* Keymap fabidolum: (Base Layer) Bépo Layer / shifted
@@ -173,7 +183,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * |---------------------------------------------------------------------------------------------------------------------------------|
    * | Esc |  F1  |  F2  |  F3  |  F4  |      F5  |  F6  |  F7  |  F8  |      F9  |  F10 |  F11 |  F12 |   Delete   |    Toggle BEPO    |
    * |---------------------------------------------------------------------------------------------------------------------------------|
-   * |  #  |     1   |   2   |   3   |   4   |    5      |       6    |    7    |    8   |   9  |   0  |   °  |  `  |  Backspace  |
+   * |  ~  |     1   |   2   |   3   |   4   |    5      |       6    |    7    |    8   |   9  |   0  |   °  |  #  |  Backspace  |
    * |---------------------------------------------------------------------------------------------------------------------------------|
    * | Tab |        |        |      |      |      |            |        |        |       |      |      |      |  !  |   |  | PgUp |
    * |---------------------------------------------------------------------------------------------------------------------------------|
@@ -184,6 +194,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * |Ctrl | GUI |     Alter   |    Space   |   Ctrl   |   Shift   |     Space     |    Alter   |  FN  | Ctrl | Lft  |  Dn |  Rig |
    * |---------------------------------------------------------------------------------------------------------------------------------|
    * changed from bépo : 
+   *    ~ and #
    * added to bépo : |
    */
   /* Keymap fabidolum: (Base Layer) Bépo Layer AltGr
@@ -207,27 +218,29 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * added to bépo : backslash
    */
 
-  [LR_ASC_BEPO] = LAYOUT(
+  [LR_CA_BEPO] = LAYOUT(
     _______,  _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,      _______,          _______,
-     KC_DLR,  CA_DQUO, CA_LCBR, CA_RCBR, CA_LBRC, CA_RBRC,                     CA_AT, CA_PLUS, CA_MINS, CA_SLSH, CA_ASTR,   CA_EQL, CA_PERC,      KC_BSPC,
+    CA_GRV,  CA_DQUO, CA_LCBR, CA_RCBR, CA_LBRC, CA_RBRC,                     CA_AT, CA_PLUS, CA_MINS, CA_SLSH, CA_ASTR,   CA_EQL, KC_DLR,      KC_BSPC,
     _______,     KC_B, CA_EACU,    KC_P,    KC_O, CA_EGRV,                      KC_W,    KC_V,    KC_D,    KC_L,    KC_J,     KC_Z, CA_CIRC, CA_BSLS, _______,
     _______,     KC_A,    KC_U,    KC_I,    KC_E, KC_COMM,       _______,       KC_C,    KC_T,    KC_S,    KC_R,    KC_N,     KC_M,      KC_ENT,      KC_PGDN,
-    CSA(SFT), CA_AGRV,    KC_Y,    KC_X,  KC_DOT,    KC_K,       _______,     CA_QUOT,    KC_Q,    KC_G,    KC_H,    KC_F,  CA_CCED,            KC_UP,
-    _______,  _______,      _______,          _______,     _______, CSA(SFT),       _______,         _______,     _______, _______, _______, _______, _______),
-  [LR_ASC_BEPO_SFT] = LAYOUT(
+    CA(SFT),  CA_AGRV,    KC_Y,    KC_X,  KC_DOT,    KC_K,       _______,     CA_QUOT,    KC_Q,    KC_G,    KC_H,    KC_F,  CA_CCED,            KC_UP,
+    _______,  _______,      _______,          _______,     _______, CA(SFT),  _______,        MO(LR_CA_BEPO_AGR),     _______, _______, _______, _______, _______),
+    //
+  [LR_CA_BEPO_SFT] = LAYOUT(
     _______,  _______, _______, _______, _______,    _______, _______, _______, _______,  _______, _______, _______, _______,        _______,            _______,
-     KC_HASH,  M(M_1),  M(M_2),  M(M_3),  M(M_4),     M(M_5),                    M(M_6),   M(M_7),  M(M_8),  M(M_9),  M(M_0),  M(M_DEGR),   CA_GRV,     _______,
-    _______,  _______, _______, _______, _______,    _______,                   _______,  _______, _______, _______, _______,  _______,    _______, _______, _______,
+    KC_TILD,  M(M_1),  M(M_2),  M(M_3),  M(M_4),     M(M_5),                    M(M_6),   M(M_7),  M(M_8),  M(M_9),  M(M_0),  M(M_DEGR),   KC_HASH,     _______,
+    _______,  _______, _______, _______, _______,    _______,                   _______,  _______, _______, _______, _______,  _______,    _______, M(M_PIPE), _______,
     _______,  _______, _______, _______, _______,  M(M_SCLN),      _______,     _______,  _______, _______, _______, _______,  _______,        _______,      _______,
     _______,  _______, _______, _______,  KC_COLN,   _______,      _______,      CA_QUES,  _______, _______, _______, _______,  _______,              _______,
     _______,  _______,      _______,          _______,       _______, _______,      _______,           _______,     _______,   _______,    _______,  _______, _______),
-  [LR_ASC_BEPO_AGR_SFT] = LAYOUT(
-    _______,  _______, _______, _______, _______,    _______, _______, _______, _______,  _______, _______, _______, _______,       _______,            _______,
-     KC_HASH,  M(M_1),  M(M_2),  M(M_3),  M(M_4),     M(M_5),                    M(M_6),   M(M_7),  M(M_8),  M(M_9),  M(M_0),  M(M_DEGR), M(M_GRV),     _______,
-    _______,  _______, _______, _______, _______,    _______,                   _______,  _______, _______, _______, _______,  _______,    _______, _______, _______,
-    _______,  _______, _______, _______, _______,  M(M_SCLN),      _______,     _______,  _______, _______, _______, _______,  _______,       _______,       _______,
-    _______,  _______, _______, _______,  KC_COLN,   _______,      _______,      CA_QUES,  _______, _______, _______, _______,  _______,              _______,
-    _______,  _______,      _______,          _______,       _______, _______,      _______,           _______,     _______,   _______,    _______,  _______, _______)
+    //
+  [LR_CA_BEPO_AGR] = LAYOUT(
+    _______,  _______, _______, _______, _______,  _______, _______, _______, _______,  _______, _______, _______, _______,       _______,        _______,
+    _______,  _______, _______, _______, _______,  _______,                   _______,  _______, _______, _______, _______, _______, _______,     _______,
+    _______,  _______, _______, _______, _______,  _______,                   _______,  _______, _______, _______, _______, _______, _______, _______, _______,
+    _______,  _______, _______, _______, _______,  _______,      _______,     _______,  _______, _______, _______, _______, _______,     _______,      _______,
+    _______,  _______, _______, _______,  _______, _______,      _______,     _______,  _______, _______, _______, _______, _______,          _______,
+    _______,  _______,      _______,          _______,      _______, _______,      _______,           _______,     _______, _______, _______, _______, _______)
 };
 
 void hold_shift(void) {
@@ -239,7 +252,7 @@ void release_shift(void) {
 }
 
 void sync_shift_with_csa_layer(void) {
-    if (IS_LAYER_ON(LR_ASC_BEPO_SFT) && !IS_LAYER_ON(LR_ASC_BEPO_AGR_SFT)) {
+    if (IS_LAYER_ON(LR_CA_BEPO_SFT) && !IS_LAYER_ON(LR_CA_BEPO_AGR_SFT)) {
         hold_shift();
     } else {
         release_shift();
@@ -280,16 +293,17 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
 {
   // MACRODOWN only works in this function
     switch(id) {
-        case M_CSA_SFT:
-            // BÉPO over CSA: toggle shift layer
-            layer_invert(LR_ASC_BEPO_SFT);
+        case M_CA_SFT:
+            // BÉPO over CA: toggle shift layer
+            layer_invert(LR_CA_BEPO_SFT);
             sync_shift_with_csa_layer();
             break;
         case M_1 ... M_0:
         case M_DEGR:
         case M_SCLN:
         case M_GRV:
-                    // macros of the shift layer that require to release shift
+        case M_PIPE:
+            // macros of the shift layer that require to release shift
             if (record->event.pressed) {
                 release_shift();
                 switch (id) {
@@ -301,8 +315,15 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
                     case M_SCLN:
                         return MACRO(D(SCLN), END);
                     case M_GRV:
-                        send_cp1252(0x60);
+                        //send_cp1252(0x60);
+                        //break;
+                        register_code(KC_GRV);
+                        unregister_code(KC_GRV);
                         break;
+                    case M_PIPE:
+                        return MACRO(DOWN(KC_ALGR), D(GRV), END);
+                        //register_code(KC_PIPE);
+                        //break;
                 }
             } else {
                 sync_shift_with_csa_layer();
@@ -314,6 +335,10 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
                         return MACRO(UP(KC_ALGR), U(SCLN), END);
                     case M_SCLN:
                         return MACRO(U(SCLN), END);
+                    case M_PIPE:
+                        return MACRO(UP(KC_ALGR), U(GRV), END);
+                        //unregister_code(KC_PIPE);
+                        //break;
                 } 
             }
             break;
@@ -325,8 +350,8 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
 layer_state_t layer_state_set_user(layer_state_t state) {
     //switch (get_highest_layer(state)) {
     switch (biton32(state)){
-    case LR_ASC_BEPO:
-    case LR_ASC_BEPO_SFT:
+    case LR_CA_BEPO:
+    case LR_CA_BEPO_SFT:
         rgb_matrix_sethsv_noeeprom(HSV_TEAL);
         //rgb_matrix_sethsv_noeeprom(0xF0, 0xF0, 0xF0);
         break;
