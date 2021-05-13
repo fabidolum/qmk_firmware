@@ -55,6 +55,7 @@ enum macros {
     M_DEGR,
     M_SCLN,
     M_PIPE,
+    M_TILD,
 };
 
 // call CA macro
@@ -227,7 +228,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     //
   [LR_CA_BEPO_SFT] = LAYOUT(
     _______,  _______, _______, _______, _______,    _______, _______, _______, _______,  _______, _______, _______, _______,        _______,            _______,
-    KC_TILD,  M(M_1),  M(M_2),  M(M_3),  M(M_4),     M(M_5),                    M(M_6),   M(M_7),  M(M_8),  M(M_9),  M(M_0),  M(M_DEGR),   KC_HASH,     _______,
+    M(M_TILD),  M(M_1),  M(M_2),  M(M_3),  M(M_4),     M(M_5),                    M(M_6),   M(M_7),  M(M_8),  M(M_9),  M(M_0),  M(M_DEGR),   KC_HASH,     _______,
     _______,  _______, _______, _______, _______,    _______,                   _______,  _______, _______, _______, _______,  _______,    _______, M(M_PIPE), _______,
     _______,  _______, _______, _______, _______,  M(M_SCLN),      _______,     _______,  _______, _______, _______, _______,  _______,        _______,      _______,
     _______,  _______, _______, _______,  KC_COLN,   _______,      _______,      CA_QUES,  _______, _______, _______, _______,  _______,              _______,
@@ -301,6 +302,7 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
         case M_DEGR:
         case M_SCLN:
         case M_PIPE:
+        case M_TILD:
             // macros of the shift layer that require to release shift
             if (record->event.pressed) {
                 release_shift();
@@ -314,6 +316,8 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
                         return MACRO(D(SCLN), END);
                     case M_PIPE:
                         return MACRO(DOWN(KC_ALGR), D(GRV), END);
+                    case M_TILD:
+                        return MACRO(DOWN(KC_ALGR), D(RBRC), END);
                 }
             } else {
                 sync_shift_with_csa_layer();
@@ -327,6 +331,8 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
                         return MACRO(U(SCLN), END);
                     case M_PIPE:
                         return MACRO(UP(KC_ALGR), U(GRV), END);
+                    case M_TILD:
+                        return MACRO(UP(KC_ALGR), U(RBRC), END);
                 } 
             }
             break;
