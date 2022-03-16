@@ -14,7 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include QMK_KEYBOARD_H
-#include "debug.h"
+//#include "debug.h"
 #include "action_layer.h"
 #include "action_util.h"
 #include "keymap_extras/keymap_canadian_multilingual.h"
