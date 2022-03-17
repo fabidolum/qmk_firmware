@@ -14,20 +14,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include QMK_KEYBOARD_H
-//#include "debug.h"
+#include "debug.h"
 #include "action_layer.h"
 #include "action_util.h"
+#include "keymap_extras/keymap_bepo.h"
 #include "keymap_extras/keymap_canadian_multilingual.h"
 
 /* purpose:
  * US keyboard on OS side => send the key corresponding to the keycap etching
- * Canadian Multilangual on OS side: toggle to the layer LR8ASC_BEPO and get a custom bépo layout
+ * Canadian Multilangual on OS side: toggle to the layer LR_ASC_BEPO and get a custom bépo layout
  *
  * Toggling : use the PrintScreen key (who uses it?)
  * Color indicator (leds) depending on QWERTY or BEPO(ASC)
  *
- * Keep the original (X-bows nature) Fn layer, except the F1 key to toggle between layouts
+ * Keep the original (X-bows nature) Fn layer.
  */
+
+/* note: based on : 
+https://github.com/qmk/qmk_firmware/blob/master/layouts/community/ergodox/bepo_csa/keymap.c
+*/
+
+/*enum layers {
+    LR_BASE,     // almost original layer: qwerty
+    LR_CA_BEPO,  // custom bépo using Canadian Multilanguage (CA)
+    LR_CA_BEPO_SFT,       // shifted
+    LR_CA_BEPO_AGR,       // alt-gr
+    LR_CA_BEPO_AGR_SFT,
+    LR_BASE_FN,          // original fn layer
+};
+*/
 
 #define LR_BASE 0         // almost original layer: qwerty
 #define LR_CA_BEPO 1      // same as bépo but using Canadian Multilanguage (CA)
@@ -36,11 +51,49 @@
 #define LR_CA_BEPO_AGR_SFT 4
 #define LR_BASE_FN 5   // original fn layer
 
-/* note : massively inspired from:
-  https://github.com/DidierLoiseau/qmk_firmware/blob/bepo_csa-update/layouts/community/ergodox/bepo_csa/keymap.c
-*/
+enum custom_keycodes {
+    CSA_SFT = SAFE_RANGE,
+    CSA_AGR_SFT,
+    CSA_SFT_AGR,
+};
 
-enum macros {
+
+
+/*enum macros {
+    // Characters that do not exist in CSA and must be implemented based on unicode support
+    // Note: these are intentionally declared first to be used as indexes in spec_chars below
+    UC_NDSH, // –
+    UC_MDSH, // —
+    UC_ELPS, // …
+    END_UC, // indicates the last unicode character macro
+    // other macros
+    M_CSA_SFT, // toggle shift on CSA
+    M_CSA_AGR_SFT, // toggle shift on LR_CSA_AGR (goes to LR_CSA_AGR_SFT)
+    M_CSA_SFT_AGR, // toggle AltGr on LR_CSA_SFT (goes to LR_CSA_AGR_SFT)
+    // macros for characters that need to be un-shifted in LR_CA_MULT_SHIFT
+    M_1,
+    M_2,
+    M_3,
+    M_4,
+    M_5,
+    M_6,
+    M_7,
+    M_8,
+    M_9,
+    M_0,
+    M_DEGR,
+    M_SCLN,
+    M_GRV,
+    M_NBSP,
+    // macros for characters that don't have a simple key combination in LR_CA_MULT_ALTGR
+    M_CRC,
+    // other layer macros
+    M_DBL0, // double 0
+    M_FNLR, // fn layer
+    M_NMAL, // num+alt
+};
+*/
+/*enum macros {
     // Characters that do not exist in CSA and must be implemented based on CP1252 support
     // Note: these are intentionally declared first to be used as indexes in cp1252_chars below
     CP_NDSH, // –
@@ -63,19 +116,30 @@ enum macros {
     M_PIPE,
     M_TILD,
 };
+*/
+/*
+#define CSA(name)   M(M_CSA_##name)     // calls a CSA macro
 
+const uint16_t unicode_chars[] = {
+        [UC_NDSH] = L'–',
+        [UC_MDSH] = L'—',
+        [UC_ELPS] = L'…',
+};
+*/
 // call CA macro
-#define CA(name)   M(M_CA_##name)  
+//#define CA(name)   M(M_CA_##name)  
 
-const uint16_t cp1252_chars[] = {
+/*const uint16_t cp1252_chars[] = {
         [CP_NDSH] = 0x96,
         [CP_MDSH] = 0x97,
         [CP_ELPS] = 0x85,
 };
-
+*/
 /* shortcut for CP1252 character macros */
-#define MCP(name)   M(CP_##name)    // calls a unicode macro
+//#define MCP(name)   M(CP_##name)    // calls a unicode macro
 
+/* shortcut for unicode character macros */
+// #define MUC(name)   M(UC_##name)    // calls a unicode macro
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   /* Keymap VANILLA: (Base Layer) Default Layer
@@ -113,7 +177,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TRNS,   KC_TRNS, KC_TRNS, KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,  KC_TRNS,   KC_MUTE,   KC_VOLU,
     KC_TRNS,   KC_TRNS, KC_TRNS,           KC_TRNS,  KC_TRNS,   KC_TRNS,  KC_TRNS,            KC_TRNS,   KC_TRNS,  KC_MPLY,   KC_MPRV,   KC_VOLD,   KC_MNXT),
   /* changes:
-    F1 (TRS) : TG(LR_BEPO)
+    
   */
 
 /* Original bépo (keymap_bepo.h)
@@ -161,7 +225,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * ├───┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─────┤
  * │     │ ¦ │ ˝ │ § │   │   │   │   │   │   │   │   │   │     │
  * ├─────┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┐    │
- * │      │   │   │ ˙ │ ¤ │ ̛  │ ſ │   │   │ ™ │   │ º │ , │    │
+ * │      │   │   │ ˙ │ ¤ │ ̛ │ ſ │   │   │ ™ │   │ º │ , │    │
  * ├────┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴───┴────┤
  * │    │   │   │ ‘ │ ’ │ · │ ⌨ │ ̉  │ ̣  │   │ ‡ │ ª │          │
  * ├────┼───┴┬──┴─┬─┴───┴───┴───┴───┴───┴──┬┴───┼───┴┬────┬────┤
@@ -236,26 +300,28 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      CA_GRV,  CA_DQUO, CA_LABK, CA_RABK, CA_LPRN, CA_RPRN,                     CA_AT, CA_PLUS, CA_MINS, CA_SLSH, CA_ASTR,   CA_EQL, KC_DLR,      KC_BSPC,
     _______,     KC_B, CA_EACU,    KC_P,    KC_O, CA_EGRV,                      KC_W,    KC_V,    KC_D,    KC_L,    KC_J,     KC_Z, CA_CIRC, CA_BSLS, _______,
     _______,     KC_A,    KC_U,    KC_I,    CA_E, KC_COMM,       _______,       KC_C,    KC_T,    KC_S,    KC_R,    KC_N,     KC_M,      KC_ENT,      KC_PGDN,
-    CA(SFT),  CA_AGRV,    KC_Y,    KC_X,  KC_DOT,    KC_K,       _______,     CA_QUOT,    KC_Q,    KC_G,    KC_H,    KC_F,  CA_CCED,            KC_UP,
-    _______,  _______,       _______,          _______,    _______, CA(SFT),  _______,        MO(LR_CA_BEPO_AGR),     _______, _______, _______, _______, _______),
+    CSA_SFT,  CA_AGRV,    KC_Y,    KC_X,  KC_DOT,    KC_K,       _______,     CA_QUOT,    KC_Q,    KC_G,    KC_H,    KC_F,  CA_CCED,            KC_UP,
+    _______,  _______,       _______,          _______,    _______, CSA_SFT,  _______,        MO(LR_CA_BEPO_AGR),     _______, _______, _______, _______, _______),
     //
   [LR_CA_BEPO_SFT] = LAYOUT(
     _______,   _______, _______, _______, _______,   _______, _______, _______, _______, _______, _______, _______, _______,       _______,            _______,
-    M(M_TILD),  M(M_1),  M(M_2),  M(M_3),  M(M_4),    M(M_5),                    M(M_6),  M(M_7),  M(M_8),  M(M_9),  M(M_0), M(M_DEGR), KC_HASH,       _______,
-    _______,   _______, _______, _______, _______,   _______,                   _______, _______, _______, _______, _______,   _______, KC_EXLM, M(M_PIPE), _______,
-    _______,   _______, _______, _______, _______, M(M_SCLN),      _______,     _______, _______, _______, _______, _______,   _______,      _______,       _______,
+    _______,   _______, _______, _______, _______,   _______,                   _______, _______, _______, _______, _______,   _______, KC_EXLM, _______,
+    _______,   _______, _______, _______, _______,   _______,                   _______, _______, _______, _______, _______,   _______, KC_EXLM, _______, _______,
+    _______,   _______, _______, _______, _______, KC_SCLN,      _______,     _______, _______, _______, _______, _______,   _______,      _______,       _______,
     _______,   _______, _______, _______, KC_COLN,   _______,      _______,     CA_QUES, _______, _______, _______, _______,   _______,              _______,
     _______,   _______,      _______,          _______,       _______, _______,      _______,           _______,    _______,   _______, _______,   _______, _______),
     //
-  [LR_CA_BEPO_AGR] = LAYOUT(
+  /*[LR_CA_BEPO_AGR] = LAYOUT(
     _______,  _______, _______, _______,   _______, _______, _______, _______, _______,  _______, _______, _______, _______,       _______,        _______,
     _______,  _______, CA_LCBR,  CA_RCBR, CA_LBRC, CA_RBRC,                    _______, _______,  _______, _______, _______, _______, _______,     _______,
     _______,  _______, _______, KC_AMPR,     CA_OE, _______,                   _______,  _______, _______, _______, _______, _______, _______, _______, _______,
     _______,    CA_AE, CA_UGRV, _______,   _______, _______,      _______,     _______,  _______, _______, _______, _______, _______,     _______,      _______,
     _______,  _______, _______, _______, MCP(ELPS), _______,      _______,     _______,  _______, _______, _______, _______, _______,          _______,
     _______,  _______,      _______,       KC_UNDS,          _______, _______,      KC_UNDS,           _______,     _______, _______, _______, _______, _______)
+*/
 };
 
+//     M(M_TILD),  M(M_1),  M(M_2),  M(M_3),  M(M_4),    M(M_5),                    M(M_6),  M(M_7),  M(M_8),  M(M_9),  M(M_0), M(M_DEGR), KC_HASH,       _______,
 void hold_shift(void) {
     register_code(KC_LSHIFT);
 }
@@ -263,6 +329,7 @@ void hold_shift(void) {
 void release_shift(void) {
     unregister_code(KC_LSHIFT);
 }
+
 
 void sync_shift_with_csa_layer(void) {
     if (IS_LAYER_ON(LR_CA_BEPO_SFT) && !IS_LAYER_ON(LR_CA_BEPO_AGR_SFT)) {
@@ -272,7 +339,7 @@ void sync_shift_with_csa_layer(void) {
     }
 }
 
-
+/*
 uint16_t hextokeycode(int hex) {
     if (hex == 0x0) {
         return KC_P0;
@@ -282,8 +349,27 @@ uint16_t hextokeycode(int hex) {
         return KC_A + (hex - 0xA);
     }
 }
+*/
+/*
+void send_unicode(uint16_t unicode)
+{
+    // For more info on how this works per OS, see here: https://en.wikipedia.org/wiki/Unicode_input#Hexadecimal_code_input
+    // Implemented for Windows:
+    // Pressing ALT followed by + followed by the unicode code point in hex.
+    // Requires registry key HKEY_CURRENT_USER\Control Panel\Input Method\EnableHexNumpad set to String 1
+    register_code(KC_LALT);
+    register_code(KC_PPLS);
+    unregister_code(KC_PPLS);
 
-void send_cp1252(uint16_t cp1252)
+    for (int i = 12; i >= 0; i -= 4) {
+        register_code(hextokeycode((unicode >> i) & 0xF));
+        unregister_code(hextokeycode((unicode >> i) & 0xF));
+    }
+
+    unregister_code(KC_LALT);
+}
+*/
+/*void send_cp1252(uint16_t cp1252)
 {
     // For more info on how this works, see first method of http://www.georgehernandez.com/h/xComputers/CharacterSets/Shortcuts.asp#windows
     // Pressing ALT followed by 0 and the CP1252 decimal code point.
@@ -300,8 +386,9 @@ void send_cp1252(uint16_t cp1252)
 
     unregister_code(KC_LALT);
 }
+*/
 
-
+/*
 const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
 {
   // MACRODOWN only works in this function
@@ -356,6 +443,147 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
             break;
     }
      return MACRO_NONE;
+};
+*/
+
+/*
+const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
+{
+  // MACRODOWN only works in this function
+    switch(id) {
+        case 0 ... END_UC:
+            if (record->event.pressed) {
+                send_unicode(unicode_chars[id]);
+            }
+            break;
+        case M_CSA_SFT:
+            // BÉPO over CSA: toggle shift layer
+            layer_invert(LR_CSA_SFT);
+            if (record->event.pressed) {
+                hold_shift();
+            } else {
+                release_shift();
+            }
+            break;
+        case M_CSA_SFT_AGR:
+            // BÉPO over CSA: from shift layer, momentary altgr+shift layer
+            layer_invert(LR_CSA_AGR);
+            layer_invert(LR_CSA_AGR_SFT);
+            if (record->event.pressed) {
+                // shift not needed for LR_CSA_AGR_SFT
+                release_shift();
+            } else {
+                // back to shift layer
+                hold_shift();
+            }
+            break;
+        case M_CSA_AGR_SFT:
+            // BÉPO over CSA: from altgr layer, momentary altgr+shift layer
+            layer_invert(LR_CSA_SFT);
+            layer_invert(LR_CSA_AGR_SFT);
+            break;
+        case M_1 ... M_0:
+        case M_DEGR:
+        case M_SCLN:
+        case M_GRV:
+        case M_NBSP:
+            // macros of the shift layer that require to release shift
+            if (record->event.pressed) {
+                release_shift();
+                switch (id) {
+                    case M_1 ... M_0:
+                        register_code(KC_1 + (id - M_1));
+                        break;
+                    case M_DEGR:
+                        return MACRO(DOWN(KC_ALGR), D(SCLN), END);
+                    case M_SCLN:
+                        return MACRO(D(SCLN), END);
+                    case M_GRV:
+                        return MACRO(I(75), DOWN(KC_ALGR), TYPE(CA_CIRC), UP(KC_ALGR), T(SPACE), END);
+                    case M_NBSP:
+                        // use weak mod such that pressing another key will not be affected
+                        add_weak_mods(MOD_BIT(KC_ALGR));
+                        return MACRO(D(SPACE), END);
+                }
+            } else {
+                hold_shift();
+                switch (id) {
+                    case M_1 ... M_0:
+                        unregister_code(KC_1 + (id - M_1));
+                        break;
+                    case M_DEGR:
+                        return MACRO(UP(KC_ALGR), U(SCLN), END);
+                    case M_SCLN:
+                        return MACRO(U(SCLN), END);
+                    case M_NBSP:
+                        del_weak_mods(MOD_BIT(KC_ALGR));
+                        return MACRO(U(SPACE), END);
+                }
+            }
+            break;
+        case M_CRC:
+            if (record->event.pressed) {
+                return MACRO(I(75), TYPE(CA_CIRC), T(SPACE), END);
+            }
+            break;
+        case M_DBL0:
+            if (record->event.pressed) {
+                return MACRO( I(25), T(P0), T(P0), END );
+            }
+        break;
+        case M_FNLR:
+            layer_invert(LR_NUMR);
+            layer_invert(LR_FN);
+            break;
+        case M_NMAL:
+            layer_invert(LR_NUMR);
+            if (record->event.pressed) {
+                register_code(KC_LALT);
+            } else {
+                unregister_code(KC_LALT);
+            }
+            break;
+    }
+    return MACRO_NONE;
+};
+*/
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+    case CSA_SFT:
+        if (record->event.pressed) {
+            // when keycode QMKBEST is pressed
+            //layer_invert(LR_CA_BEPO_SFT);
+            //sync_shift_with_csa_layer();
+            hold_shift();
+            layer_on(LR_CA_BEPO_SFT);
+        } else {
+            // when keycode QMKBEST is released
+            layer_off(LR_CA_BEPO_SFT);
+            release_shift();
+        }
+        break;
+
+    case CSA_SFT_AGR:
+        // BÉPO over CSA: from shift layer, momentary altgr+shift layer
+        layer_invert(LR_CA_BEPO_AGR);
+        layer_invert(LR_CA_BEPO_AGR_SFT);
+        if (record->event.pressed) {
+            // shift not needed for LR_CSA_AGR_SFT
+            release_shift();
+        } else {
+            // back to shift layer
+            hold_shift();
+        }
+        break;
+
+    case CSA_AGR_SFT:
+        // BÉPO over CSA: from altgr layer, momentary altgr+shift layer
+        layer_invert(LR_CA_BEPO_SFT);
+        layer_invert(LR_CA_BEPO_AGR_SFT);
+        break;
+    }
+    return true;
 };
 
 
