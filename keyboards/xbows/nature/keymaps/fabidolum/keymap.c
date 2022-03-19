@@ -15,14 +15,16 @@
  */
 #include QMK_KEYBOARD_H
 //#include "debug.h"
-#include "action_layer.h"
-#include "action_util.h"
+//#include "action_layer.h"
+//#include "action_util.h"
 //#include "keymap_extras/keymap_bepo.h"
 #include "keymap_extras/keymap_canadian_multilingual.h"
+#include "keymap_extras/keymap_french.h"
 
 /* purpose:
  * US keyboard on OS side => send the key corresponding to the keycap etching
  * Canadian Multilangual on OS side: toggle to the layer LR_ASC_BEPO and get a custom bépo layout
+ * French on OS side: toggle to the layer LR_FR_BEPO and get the same custom bépo layout plus the missing char from canandian (euro sign, ...)
  *
  * Toggling : use the PrintScreen key (who uses it?)
  * Color indicator (leds) depending on QWERTY or BEPO(ASC)
@@ -53,7 +55,7 @@ https://github.com/qmk/qmk_firmware/blob/master/layouts/community/ergodox/bepo_c
 
 enum custom_keycodes {
     CSA_SFT = SAFE_RANGE,
-    IDO_EURO,
+//    IDO_EURO,
 //    CSA_AGR_SFT,
 //    CSA_SFT_AGR,
 };
@@ -91,9 +93,6 @@ const key_override_t keypip_override = ko_make_with_layers(MOD_MASK_SHIFT, CA_BS
 //KC_COMM
 const key_override_t keyscl_override = ko_make_with_layers(MOD_MASK_SHIFT, KC_COMM, CA_SCLN, LR_CA_BEPO_SFT);
 
-//const key_override_t keyeur_override = ko_make_with_layers(MOD_MASK_ALT, CA_E, CA_EURO, LR_CA_BEPO);
-
-
 // This globally defines all key overrides to be used
 const key_override_t **key_overrides = (const key_override_t *[]){
 	&keyone_override,
@@ -111,13 +110,12 @@ const key_override_t **key_overrides = (const key_override_t *[]){
     &keyhas_override,
     &keypip_override,
     &keyscl_override,
-//    &keyeur_override,
 	NULL // Null terminate the array of overrides!
 };
 
-void matrix_init_user(void) {
-    set_unicode_input_mode(UC_LNX);
-};
+//void matrix_init_user(void) {
+//    set_unicode_input_mode(UC_LNX);
+//};
 
 /*enum macros {
     // Characters that do not exist in CSA and must be implemented based on unicode support
@@ -302,75 +300,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * │    │    │    │                        │    │    │    │    │* │ctr│gui│  alt  │       │ctr│sft│       │  alt  │ fn│ctr│ ← │ ↓ │ → │
  * └────┴────┴────┴────────────────────────┴────┴────┴────┴────┘* └───┴───┴───────┴───────┴───┴───┴───────┴───────┴───┴───┴───┴───┴───┘
  */
-  /* Keymap fabidolum: (Base Layer) Bépo Layer
-   *
-   * |---------------------------------------------------------------------------------------------------------------------------------|
-   * | Esc |  F1  |  F2  |  F3  |  F4  |      F5  |  F6  |  F7  |  F8  |      F9  |  F10 |  F11 |  F12 |   Delete   |    Toggle BEPO    |
-   * |---------------------------------------------------------------------------------------------------------------------------------|
-   * |  `  |     "   |   <   |   >   |   (   |    )      |       @    |    +    |    -   |   /  |   *  |   =  |  $  |  Backspace  |
-   * |---------------------------------------------------------------------------------------------------------------------------------|
-   * | Tab |   B    |    É   |   P  |   O  |   È  |            |    W   |    V   |    D  |   L  |   J  |   Z  |  ^  |   \  | PgUp |
-   * |---------------------------------------------------------------------------------------------------------------------------------|
-   * | Ctl |   A   |   U   |   I  |   E  |   ,  |      Bksp      |    C  |    T   |   S  |   R  |   N  |  M  |    Enter   | PgDn |
-   * |---------------------------------------------------------------------------------------------------------------------------------|
-   * |Shift|   À  |   Y  |   X  |   .  |   K  |       Enter       |    '  |    Q   |  G  |   H  |  F  |   Ç  |      |  Up |
-   * |---------------------------------------------------------------------------------------------------------------------------------|
-   * |Ctrl | GUI |     Alter   |    Space   |   Ctrl   |   Shift   |     Space     |    Alter   |  FN  | Ctrl | Lft  |  Dn |  Rig |
-   * |---------------------------------------------------------------------------------------------------------------------------------|
-   * removed from bépo : ê, %
-   * changed from bépo : 
-   *    « »  replaced by < >
-   *    ' is single quote (not typographic) 
-   *    w and ^ are swapped
-   *    ç moved (replacing the right shift , keeping only the one which is available under the thumb )
-   *    ` and $
-   * added to bépo : \
-   */
-  /* Keymap fabidolum: (Base Layer) Bépo Layer / shifted
-   *
-   * |---------------------------------------------------------------------------------------------------------------------------------|
-   * | Esc |  F1  |  F2  |  F3  |  F4  |      F5  |  F6  |  F7  |  F8  |      F9  |  F10 |  F11 |  F12 |   Delete   |    Toggle BEPO    |
-   * |---------------------------------------------------------------------------------------------------------------------------------|
-   * |  ~  |     1   |   2   |   3   |   4   |    5      |       6    |    7    |    8   |   9  |   0  |   °  |  #  |  Backspace  |
-   * |---------------------------------------------------------------------------------------------------------------------------------|
-   * | Tab |        |        |      |      |      |            |        |        |       |      |      |      |  !  |   |  | PgUp |
-   * |---------------------------------------------------------------------------------------------------------------------------------|
-   * | Ctl |       |       |      |      |   ,  |      Bksp      |       |        |      |      |      |     |    Enter   | PgDn |
-   * |---------------------------------------------------------------------------------------------------------------------------------|
-   * |Shift|      |      |      |   :  |      |       Enter       |    ?  |        |     |      |     |      |      |  Up |
-   * |---------------------------------------------------------------------------------------------------------------------------------|
-   * |Ctrl | GUI |     Alter   |    Space   |   Ctrl   |   Shift   |     Space     |    Alter   |  FN  | Ctrl | Lft  |  Dn |  Rig |
-   * |---------------------------------------------------------------------------------------------------------------------------------|
-   * changed from bépo : 
-   *    ~ and #
-   * added to bépo : |
-   */
-  /* Keymap fabidolum: (Base Layer) Bépo Layer AltGr
-   *
-   * |---------------------------------------------------------------------------------------------------------------------------------|
-   * | Esc |  F1  |  F2  |  F3  |  F4  |      F5  |  F6  |  F7  |  F8  |      F9  |  F10 |  F11 |  F12 |   Delete   |    Toggle BEPO    |
-   * |---------------------------------------------------------------------------------------------------------------------------------|
-   * |     |         |       |       |       |           |      {     |     }   |    [  |   ]  |      |      |     |  Backspace  |
-   * |---------------------------------------------------------------------------------------------------------------------------------|
-   * | Tab |        |     |   &  |   Œ  |      |       |            |        |        |       |      |      |      |     |      | PgUp |
-   * |---------------------------------------------------------------------------------------------------------------------------------|
-   * | Ctl |   Æ   |   ù  |      |   €   |      |      Bksp      |       |        |      |      |      |     |    Enter   | PgDn |
-   * |---------------------------------------------------------------------------------------------------------------------------------|
-   * |Shift|      |      |      |   …  |      |       Enter       |       |        |     |      |     |      |      |  Up |
-   * |---------------------------------------------------------------------------------------------------------------------------------|
-   * |Ctrl | GUI |     Alter   |      _     |   Ctrl   |   Shift   |               |    Alter   |  FN  | Ctrl | Lft  |  Dn |  Rig |
-   * |---------------------------------------------------------------------------------------------------------------------------------|
-   * removed from bépo : 
-   * changed from bépo : 
-   * added to bépo : backslash
-   */
+
 
   [LR_CA_BEPO] = LAYOUT(
     _______,  _______, _______, _______, _______,  _______, _______, _______, _______, _______, _______, _______, _______,      _______,          _______,
      CA_GRV,  CA_DQUO, CA_LABK, CA_RABK, CA_LPRN,  CA_RPRN,                     CA_AT, CA_PLUS, CA_MINS, CA_SLSH, CA_ASTR,   CA_EQL, CA_DLR,      KC_BSPC,
     _______,     KC_B, CA_EACU,    KC_P,    KC_O,  CA_EGRV,                         KC_W,    KC_V,    KC_D,    KC_L,    KC_J,     KC_Z, CA_CIRC, CA_BSLS, _______,
     _______,     KC_A,    KC_U,    KC_I,    CA_E,  KC_COMM,       CA_PERC,          KC_C,    KC_T,    KC_S,    KC_R,    KC_N,     KC_M,      KC_ENT,      KC_PGDN,
-    CSA_SFT,  CA_AGRV,    KC_Y,    KC_X,  KC_DOT,     KC_K,       UC(L'€'),      CA_QUOT,    KC_Q,    KC_G,    KC_H,    KC_F,  CA_CCED,            KC_UP,
+    CSA_SFT,  CA_AGRV,    KC_Y,    KC_X,  KC_DOT,     KC_K,       CA_EURO,      CA_QUOT,    KC_Q,    KC_G,    KC_H,    KC_F,  CA_CCED,            KC_UP,
     _______,  _______,       _______,          _______,    _______,   CSA_SFT,     _______,   MO(LR_CA_BEPO_AGR), _______, _______, _______, _______, _______),
     //
   [LR_CA_BEPO_SFT] = LAYOUT(
@@ -634,12 +571,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         }
         break;
 
-    case IDO_EURO:
-        if (record->event.pressed) {
-
-        } else {
-        }
-        break;    
+//    case IDO_EURO:
+//        if (record->event.pressed) {
+//
+//        } else {
+//        }
+//        break;    
 
 /*    case CSA_SFT_AGR:
         // BÉPO over CSA: from shift layer, momentary altgr+shift layer
