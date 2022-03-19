@@ -23,7 +23,7 @@
 
 /* purpose:
  * US keyboard on OS side => send the key corresponding to the keycap etching
- * Canadian Multilangual on OS side: toggle to the layer LR_ASC_BEPO and get a custom bépo layout
+ * Canadian Multilingual on OS side: toggle to the layer LR_ASC_BEPO and get a custom bépo layout
  * French on OS side: toggle to the layer LR_FR_BEPO and get the same custom bépo layout plus the missing char from canandian (euro sign, ...)
  *
  * Toggling : use the PrintScreen key (who uses it?)
@@ -48,10 +48,11 @@ https://github.com/qmk/qmk_firmware/blob/master/layouts/community/ergodox/bepo_c
 
 #define LR_BASE 0         // almost original layer: qwerty
 #define LR_CA_BEPO 1      // same as bépo but using Canadian Multilanguage (CA)
-#define LR_CA_BEPO_SFT 2  // shifted
-#define LR_CA_BEPO_AGR 3  // alt-gr
-#define LR_CA_BEPO_AGR_SFT 4
-#define LR_BASE_FN 5   // original fn layer
+#define LR_FR_BEPO 2
+#define LR_CA_BEPO_SFT 3  // shifted
+#define LR_CA_BEPO_AGR 4  // alt-gr
+#define LR_CA_BEPO_AGR_SFT 5
+#define LR_BASE_FN 6   // original fn layer
 
 enum custom_keycodes {
     CSA_SFT = SAFE_RANGE,
@@ -325,7 +326,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     _______,    CA_AE, CA_UGRV, _______,   _______, _______,      _______,     _______,  _______, _______, _______, _______, CA_MICR,     _______,      _______,
     _______,  _______, _______, _______, _______, _______,      _______,     _______,  _______, _______, _______, _______, _______,          _______,
     _______,  _______,      _______,       KC_UNDS,          _______, _______,      KC_UNDS,           _______,     _______, _______, _______, _______, _______)
-
+//
+  [LR_FR_BEPO] = LAYOUT(
+    _______,   _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,     _______,            _______,
+    _______,   _______, _______, _______, _______, _______,                   _______, _______, _______, _______, _______, _______, _______, _______,
+    _______,   _______, _______, _______, _______, _______,                   _______, _______, _______, _______, _______, _______, _______, _______, _______,
+    _______,   _______, _______, _______, _______, _______,        _______,      _______, _______, _______, _______, _______, _______,      _______,       _______,
+    _______,   _______, _______, _______, _______, _______,      _______,     _______, _______, _______, _______, _______, _______,              _______,
+    _______,   _______,      _______,          _______,     _______, _______,      _______,           _______,    _______, _______, _______,   _______, _______),
+    //
 };
 
 
@@ -606,6 +615,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 layer_state_t layer_state_set_user(layer_state_t state) {
     //switch (get_highest_layer(state)) {
     switch (biton32(state)){
+        case LR_FR_BEPO:
+        rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_COLOR);
+        rgb_matrix_sethsv_noeeprom(HSV_RED);
+        break;
     case LR_CA_BEPO:
     case LR_CA_BEPO_SFT:
         rgb_matrix_mode(RGB_MATRIX_SOLID_COLOR);
