@@ -17,14 +17,14 @@
 //#include "debug.h"
 //#include "action_layer.h"
 //#include "action_util.h"
-//#include "keymap_extras/keymap_bepo.h"
+#include "keymap_extras/keymap_bepo.h"
 #include "keymap_extras/keymap_canadian_multilingual.h"
-#include "keymap_extras/keymap_french.h"
+//#include "keymap_extras/keymap_french_afnor.h"
 
 /* purpose:
  * US keyboard on OS side => send the key corresponding to the keycap etching
  * Canadian Multilingual on OS side: toggle to the layer LR_ASC_BEPO and get a custom bépo layout
- * French on OS side: toggle to the layer LR_FR_BEPO and get the same custom bépo layout plus the missing char from canandian (euro sign, ...)
+ * Bepo on OS side: toggle to the layer LR_FR_BEPO and get the same custom bépo layout plus the missing char from canandian (euro sign, ...)
  *
  * Toggling : use the PrintScreen key (who uses it?)
  * Color indicator (leds) depending on QWERTY or BEPO(ASC)
@@ -52,10 +52,12 @@ https://github.com/qmk/qmk_firmware/blob/master/layouts/community/ergodox/bepo_c
 #define LR_CA_BEPO_SFT 3  // shifted
 #define LR_CA_BEPO_AGR 4  // alt-gr
 #define LR_CA_BEPO_AGR_SFT 5
-#define LR_BASE_FN 6   // original fn layer
+#define LR_FR_BEPO_SFT 6
+#define LR_BASE_FN 8   // original fn layer
 
 enum custom_keycodes {
     CSA_SFT = SAFE_RANGE,
+    BPI_SFT,
 //    IDO_EURO,
 //    CSA_AGR_SFT,
 //    CSA_SFT_AGR,
@@ -94,6 +96,9 @@ const key_override_t keypip_override = ko_make_with_layers(MOD_MASK_SHIFT, CA_BS
 //KC_COMM
 const key_override_t keyscl_override = ko_make_with_layers(MOD_MASK_SHIFT, KC_COMM, CA_SCLN, LR_CA_BEPO_SFT);
 
+// BP_GRV
+//const key_override_t keybptil_override = ko_make_with_layers(MOD_MASK_SHIFT, BP_GRV, BP_TILD, LR_FR_BEPO_SFT);
+
 // This globally defines all key overrides to be used
 const key_override_t **key_overrides = (const key_override_t *[]){
 	&keyone_override,
@@ -111,12 +116,14 @@ const key_override_t **key_overrides = (const key_override_t *[]){
     &keyhas_override,
     &keypip_override,
     &keyscl_override,
+//    &keybptil_override,
 	NULL // Null terminate the array of overrides!
 };
 
 //void matrix_init_user(void) {
 //    set_unicode_input_mode(UC_LNX);
 //};
+
 
 /*enum macros {
     // Characters that do not exist in CSA and must be implemented based on unicode support
@@ -270,10 +277,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * ├─────┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┐    │* ├───┼───┼───┼───┼───┼───┼───────┼───┼───┼───┼───┼───┼───┼───┴───┼───┤
  * │      │   │   │   │   │ ; │   │   │   │   │   │   │   │    │* │clk│ A │ U │ I │ E │ ; │   &   │ C │ T │ S │ R │ N │ M │ enter │pgd│
  * ├────┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴───┴────┤* ├───┼───┼───┼───┼───┼───┼───────┼───┼───┼───┼───┼───┼───┼───┬───┼───┤
- * │    │   │   │   │   │ : │   │ ? │   │   │   │   │          │* │sft│ À │ Y │ X │ : │ K │       │ ? │ Q │ Q │ G │ H │ Ç │   │ ↑ │   │
+ * │    │   │   │   │   │ : │   │ ? │   │   │   │   │          │* │sft│ À │ Y │ X │ : │ K │       │ ? │ Q │ G │ H │ F │ Ç │   │ ↑ │   │
  * ├────┼───┴┬──┴─┬─┴───┴───┴───┴───┴───┴──┬┴───┼───┴┬────┬────┤* ├───┼───┼───┴───┼───┴───┼───┬───┼───┴───┼───┴───┼───┼───┼───┼───┼───┤
  * │    │    │    │                        │    │    │    │    │* │ctr│gui│  alt  │  spc  │ctr│sft│  spc  │  alt  │ fn│ctr│ ← │ ↓ │ → │
  * └────┴────┴────┴────────────────────────┴────┴────┴────┴────┘* └───┴───┴───────┴───────┴───┴───┴───────┴───────┴───┴───┴───┴───┴───┘
+ */
+ /*
+ `1“”4567890-#
+ BÉPOÈWVDLJZ! 
+ AUIE;`CTSRNM
+ ÀYX:K ?QnHFÇ
+ 
  */
 /* AltGr symbols
  * ┌───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───────┐* ┌───┬───┬───┬───┬───┬───┐       ┌───┬───┬───┬───┬───┬───┬───┬───────┐
@@ -281,13 +295,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * ├───┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─────┤* ├───┼───┼───┼───┼───┼───┤       ├───┼───┼───┼───┼───┼───┼───┼───┬───┤
  * │     │ | │ ´ │ & │ Œ │ ` │ ¡ │ ˇ │ Ð │ / │ Ĳ │ Ə │ ˘ │     │* │tab│   │   │   │ œ │   │       │   │   │   │   │   │   │   │   │pgu│
  * ├─────┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┐    │* ├───┼───┼───┼───┼───┼───┼───────┼───┼───┼───┼───┼───┼───┼───┴───┼───┤
- * │      │ Æ │ Ù │ ¨ │ € │   │ © │ Þ │ ẞ │ ® │ ~ │ ¯ │ ¸ │    │* │clk│ æ │ ù │   │   │   │       │   │   │   │   │   │ µ │ enter │pgd│
+ * │      │ Æ │ Ù │ ¨ │ € │   │ © │ Þ │ ẞ │ ® │ ~ │ ¯ │ ¸ │    │* │clk│ æ │ ù │   │ € │   │       │   │   │   │   │   │ µ │ enter │pgd│
  * ├────┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴───┴────┤* ├───┼───┼───┼───┼───┼───┼───────┼───┼───┼───┼───┼───┼───┼───┬───┼───┤
  * │    │   │ \ │ { │ } │ … │ ~ │ ¿ │ ° │   │ † │ ˛ │          │* │sft│   │   │   │   │   │       │   │   │   │   │   │   │   │ ↑ │   │
  * ├────┼───┴┬──┴─┬─┴───┴───┴───┴───┴───┴──┬┴───┼───┴┬────┬────┤* ├───┼───┼───┴───┼───┴───┼───┬───┼───┴───┼───┴───┼───┼───┼───┼───┼───┤
  * │    │    │    │           _            │    │    │    │    │* │ctr│gui│  alt  │   _   │ctr│sft│   _   │  alt  │ fn│ctr│ ← │ ↓ │ → │
  * └────┴────┴────┴────────────────────────┴────┴────┴────┴────┘* └───┴───┴───────┴───────┴───┴───┴───────┴───────┴───┴───┴───┴───┴───┘
  */
+ // the € is not available with CA(intl).
 /* Shift+AltGr symbols
  * ┌───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───────┐* ┌───┬───┬───┬───┬───┬───┐       ┌───┬───┬───┬───┬───┬───┬───┬───────┐
  * │ ¶ │ „ │ “ │ ” │ ≤ │ ≥ │   │ ¬ │ ¼ │ ½ │ ¾ │ ′ │ ″ │       │* │   │   │   │   │   │   │       │   │   │   │   │   │   │   │  bksp │
@@ -304,11 +319,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 
   [LR_CA_BEPO] = LAYOUT(
-    _______,  _______, _______, _______, _______,  _______, _______, _______, _______, _______, _______, _______, _______,      _______,          _______,
+    _______,  _______, _______, _______, _______,  _______, _______, _______, _______, _______, _______, _______, _______,      _______,          TO(LR_FR_BEPO),
      CA_GRV,  CA_DQUO, CA_LABK, CA_RABK, CA_LPRN,  CA_RPRN,                     CA_AT, CA_PLUS, CA_MINS, CA_SLSH, CA_ASTR,   CA_EQL, CA_DLR,      KC_BSPC,
     _______,     KC_B, CA_EACU,    KC_P,    KC_O,  CA_EGRV,                         KC_W,    KC_V,    KC_D,    KC_L,    KC_J,     KC_Z, CA_CIRC, CA_BSLS, _______,
     _______,     KC_A,    KC_U,    KC_I,    CA_E,  KC_COMM,       CA_PERC,          KC_C,    KC_T,    KC_S,    KC_R,    KC_N,     KC_M,      KC_ENT,      KC_PGDN,
-    CSA_SFT,  CA_AGRV,    KC_Y,    KC_X,  KC_DOT,     KC_K,       CA_EURO,      CA_QUOT,    KC_Q,    KC_G,    KC_H,    KC_F,  CA_CCED,            KC_UP,
+    CSA_SFT,  CA_AGRV,    KC_Y,    KC_X,  KC_DOT,     KC_K,       _______,      CA_QUOT,    KC_Q,    KC_G,    KC_H,    KC_F,  CA_CCED,            KC_UP,
     _______,  _______,       _______,          _______,    _______,   CSA_SFT,     _______,   MO(LR_CA_BEPO_AGR), _______, _______, _______, _______, _______),
     //
   [LR_CA_BEPO_SFT] = LAYOUT(
@@ -325,16 +340,24 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     _______,  _______, _______, _______,     CA_OE, _______,                   _______,  _______, _______, _______, _______, _______, _______, _______, _______,
     _______,    CA_AE, CA_UGRV, _______,   _______, _______,      _______,     _______,  _______, _______, _______, _______, CA_MICR,     _______,      _______,
     _______,  _______, _______, _______, _______, _______,      _______,     _______,  _______, _______, _______, _______, _______,          _______,
-    _______,  _______,      _______,       KC_UNDS,          _______, _______,      KC_UNDS,           _______,     _______, _______, _______, _______, _______)
+    _______,  _______,      _______,       KC_UNDS,          _______, _______,      KC_UNDS,           _______,     _______, _______, _______, _______, _______),
 //
   [LR_FR_BEPO] = LAYOUT(
-    _______,   _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,     _______,            _______,
-    _______,   _______, _______, _______, _______, _______,                   _______, _______, _______, _______, _______, _______, _______, _______,
-    _______,   _______, _______, _______, _______, _______,                   _______, _______, _______, _______, _______, _______, _______, _______, _______,
-    _______,   _______, _______, _______, _______, _______,        _______,      _______, _______, _______, _______, _______, _______,      _______,       _______,
-    _______,   _______, _______, _______, _______, _______,      _______,     _______, _______, _______, _______, _______, _______,              _______,
-    _______,   _______,      _______,          _______,     _______, _______,      _______,           _______,    _______, _______, _______,   _______, _______),
-    //
+    _______,  _______, _______, _______, _______, _______, _______, _______, _______,  _______, _______, _______, _______,       _______,        TO(LR_BASE),
+     BP_GRV,  _______, BP_LABK, BP_RABK, _______, _______,                    _______, _______,  _______, _______, _______, _______, BP_DLR,     _______,
+    _______,  _______, _______, _______, _______, _______,                      BP_W,  _______, _______, _______, _______, _______, BP_DCIR, BP_BSLS, _______,
+    _______,  _______, _______, _______, _______, _______,      BP_PERC,     _______,  _______, _______, _______, _______, _______,     _______,      _______,
+    BPI_SFT,  _______, _______, _______, _______, _______,      _______,     _______,  _______, _______, _______, _______, BP_CCED,           _______,
+    _______,  _______,      _______,       _______,          _______, BPI_SFT,      _______,         _______,     _______, _______, _______, _______, _______),
+
+ [LR_FR_BEPO_SFT] = LAYOUT(
+    _______,  _______, _______, _______, _______, _______, _______, _______, _______,  _______, _______, _______, _______,       _______,        TO(LR_BASE),
+    BP_TILD,  _______, BP_LABK, BP_RABK, _______, _______,                    _______, _______,  _______, _______, _______, _______, BP_DLR,     _______,
+    _______,  _______, _______, _______, _______, _______,                      BP_W,  _______, _______, _______, _______, _______, BP_DCIR, BP_BSLS, _______,
+    _______,  _______, _______, _______, _______, _______,      BP_PERC,     _______,  _______, _______, _______, _______, _______,     _______,      _______,
+    _______,  _______, _______, _______, _______, _______,      _______,     _______,  _______, _______, _______, _______, BP_CCED,           _______,
+    _______,  _______,      _______,       _______,          _______, _______,      _______,         _______,     _______, _______, _______, _______, _______)
+
 };
 
 
@@ -579,13 +602,21 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             release_shift();
         }
         break;
-
-//    case IDO_EURO:
+    case BPI_SFT:
+        if (record->event.pressed) {
+            hold_shift();
+            layer_on(LR_FR_BEPO_SFT);
+        } else {
+            layer_off(LR_FR_BEPO_SFT);
+            release_shift();
+        }
+        break;
+//    case IDO_EURO: 
 //        if (record->event.pressed) {
-//
-//        } else {
+//            SEND_STRING("blq. €"); // REPLACE with what you want your macro to be
 //        }
-//        break;    
+//        break;
+
 
 /*    case CSA_SFT_AGR:
         // BÉPO over CSA: from shift layer, momentary altgr+shift layer
@@ -611,26 +642,37 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 };
 
 
-
+//void rgb_matrix_indicators_user(void) {
+//    if (layer_state_cmp(state, 1))
+//    if (host_keyboard_led_state().caps_lock) {
+//        rgb_matrix_set_color(14, 0xFF, 0xFF, 0xFF);
+//    }
+//}
 layer_state_t layer_state_set_user(layer_state_t state) {
     //switch (get_highest_layer(state)) {
     switch (biton32(state)){
         case LR_FR_BEPO:
-        rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_COLOR);
-        rgb_matrix_sethsv_noeeprom(HSV_RED);
+        case LR_FR_BEPO_SFT:
+ //       rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_COLOR);
+ //       rgb_matrix_sethsv_noeeprom(HSV_RED);
+        rgb_matrix_set_color_all(0x88, 0X00, 0X00);
+//        rgb_matrix_set_color(14, 0x00, 0x00, 0xFF);
         break;
     case LR_CA_BEPO:
     case LR_CA_BEPO_SFT:
         rgb_matrix_mode(RGB_MATRIX_SOLID_COLOR);
         rgb_matrix_sethsv_noeeprom(HSV_TEAL);
-        //rgb_matrix_sethsv_noeeprom(0xF0, 0xF0, 0xF0);
+        rgb_matrix_set_color(14, 0xFF, 0x00, 0x00);
+//        //rgb_matrix_sethsv_noeeprom(0xF0, 0xF0, 0xF0);
         break;
     case LR_BASE_FN:
         //rgb_matrix_set_color_all (0xFF,  0x00, 0x00);
+//        rgb_matrix_set_color(14, 0x00, 0x0FF, 0x00);
         break;
     default: //  for any other layers, or the default layer
         rgb_matrix_mode(RGB_MATRIX_SOLID_COLOR);
         rgb_matrix_sethsv_noeeprom(HSV_GOLD);
+//        rgb_matrix_set_color(14, 0xFF, 0xFF, 0xFF);
         break;
     }
   return state;
