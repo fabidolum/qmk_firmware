@@ -654,20 +654,21 @@ layer_state_t layer_state_set_user(layer_state_t state) {
         case LR_FR_BEPO:
         case LR_FR_BEPO_SFT:
  //       rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_COLOR);
- //       rgb_matrix_sethsv_noeeprom(HSV_RED);
-        rgb_matrix_set_color_all(0x88, 0X00, 0X00);
+        rgb_matrix_sethsv_noeeprom(HSV_RED);
+ //       rgb_matrix_set_color_all(0x88, 0X00, 0X00);
 //        rgb_matrix_set_color(14, 0x00, 0x00, 0xFF);
         break;
     case LR_CA_BEPO:
     case LR_CA_BEPO_SFT:
-        rgb_matrix_mode(RGB_MATRIX_SOLID_COLOR);
+ //       rgb_matrix_mode(RGB_MATRIX_SOLID_COLOR);
         rgb_matrix_sethsv_noeeprom(HSV_TEAL);
-        rgb_matrix_set_color(14, 0xFF, 0x00, 0x00);
+//        rgb_matrix_set_color(14, 0xFF, 0x00, 0x00);
 //        //rgb_matrix_sethsv_noeeprom(0xF0, 0xF0, 0xF0);
         break;
     case LR_BASE_FN:
         //rgb_matrix_set_color_all (0xFF,  0x00, 0x00);
 //        rgb_matrix_set_color(14, 0x00, 0x0FF, 0x00);
+        rgb_matrix_sethsv_noeeprom(HSV_AZURE);
         break;
     default: //  for any other layers, or the default layer
         rgb_matrix_mode(RGB_MATRIX_SOLID_COLOR);
