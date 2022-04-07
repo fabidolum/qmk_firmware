@@ -529,7 +529,8 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
             // macros of the shift layer that require to release shift
             if (record->event.pressed) {
                 release_shift();
-                switch (id) {
+                switch rgb_matrix_set_color(i, 60, 0, 0);
+                break;(id) {
                     case M_1 ... M_0:
                         register_code(KC_1 + (id - M_1));
                         break;
@@ -648,34 +649,77 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 //        rgb_matrix_set_color(14, 0xFF, 0xFF, 0xFF);
 //    }
 //}
-layer_state_t layer_state_set_user(layer_state_t state) {
+/*layer_state_t layer_state_set_user(layer_state_t state) {
     //switch (get_highest_layer(state)) {
+    HSV hsvr = {0, 255, 255};
+    RGB rgbr = hsv_to_rgb(hsvr);
     switch (biton32(state)){
         case LR_FR_BEPO:
         case LR_FR_BEPO_SFT:
- //       rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_COLOR);
-        rgb_matrix_sethsv_noeeprom(HSV_RED);
- //       rgb_matrix_set_color_all(0x88, 0X00, 0X00);
-//        rgb_matrix_set_color(14, 0x00, 0x00, 0xFF);
+        rgb_matrix_set_color_all(rgbr.r, rgbr.g, rgbr.b);
+         //rgb_matrix_sethsv_noeeprom(HSV_RED);
         break;
     case LR_CA_BEPO:
     case LR_CA_BEPO_SFT:
- //       rgb_matrix_mode(RGB_MATRIX_SOLID_COLOR);
-        rgb_matrix_sethsv_noeeprom(HSV_TEAL);
-//        rgb_matrix_set_color(14, 0xFF, 0x00, 0x00);
-//        //rgb_matrix_sethsv_noeeprom(0xF0, 0xF0, 0xF0);
+        //rgb_matrix_sethsv_noeeprom(HSV_TEAL);
         break;
     case LR_BASE_FN:
-        //rgb_matrix_set_color_all (0xFF,  0x00, 0x00);
-//        rgb_matrix_set_color(14, 0x00, 0x0FF, 0x00);
-        rgb_matrix_sethsv_noeeprom(HSV_AZURE);
+        //rgb_matrix_sethsv_noeeprom(HSV_AZURE);
         break;
     default: //  for any other layers, or the default layer
-        rgb_matrix_mode(RGB_MATRIX_SOLID_COLOR);
-        rgb_matrix_sethsv_noeeprom(HSV_GOLD);
-//        rgb_matrix_set_color(14, 0xFF, 0xFF, 0xFF);
+        //rgb_matrix_mode(RGB_MATRIX_SOLID_COLOR);
+        //rgb_matrix_sethsv_noeeprom(HSV_GOLD);
         break;
     }
   return state;
 }
-
+*/
+/*
+ __attribute__ ((weak)) void rgb_matrix_indicators_user(void) {
+    if (layer_state_cmp(layer_state, LR_CA_BEPO)) {
+            //if (host_keyboard_led_state().caps_lock) {
+        rgb_matrix_set_color(14, 0xFF, 0xFF, 0xFF);
+    }
+}
+*/
+/*layer_state_t layer_state_set_user(layer_state_t state) {
+    switch (get_highest_layer(state)) {
+    case LR_CA_BEPO:
+    case LR_CA_BEPO_AGR_SFT:
+    case LR_CA_BEPO_SFT:
+    case LR_CA_BEPO_AGR:
+        RGB_MATRIX_INDICATOR_SET_COLOR(14, 0xFF, 0xFF, 0xFF);
+        break;
+    case LR_BASE:
+    case LR_BASE_FN:
+        rgb_matrix_set_color(14, 0x00, 0xFF, 0xFF);
+        break;
+    case LR_FR_BEPO:
+    case LR_FR_BEPO_SFT:
+        rgb_matrix_set_color(14, 0xFF, 0x00, 0xFF);
+        break;
+    default: //  for any other layers, or the default layer
+        rgb_matrix_set_color(14, 0xFF, 0x00, 0x00);        
+        break;
+    }
+  return state;
+}
+*/
+void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
+    //for (uint8_t i = led_min; i <= led_max; i++) {
+    for (uint8_t i = 13; i <= 14; i++) {
+        switch(get_highest_layer(layer_state|default_layer_state)) {
+            case LR_CA_BEPO:
+                rgb_matrix_set_color(i, 130, 0, 0);
+                break;
+            case LR_FR_BEPO:
+                rgb_matrix_set_color(i, 0, 130, 0);
+                break;
+            case LR_BASE:
+                rgb_matrix_set_color(i, RGB_BLUE);
+                break;
+            default:
+                break;
+        }
+    }
+}
