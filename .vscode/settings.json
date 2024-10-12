@@ -30,5 +30,10 @@
     },
     "clangd.arguments": [
         "--header-insertion=never"
+    ],
+    "spellright.language": [],
+    "spellright.documentTypes": [
+        "markdown",
+        "latex"
     ]
 }
