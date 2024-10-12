@@ -14,10 +14,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include QMK_KEYBOARD_H
+#include "keymap_extras/keymap_bepo.h"
+
 
 #define LR_VANILLA 0 // orginal qwerty layer
 #define LR_RGB     8 // function layer for RGB
 #define LR_ERGOL_BASE 1 // base layer for ergol
+
+# key overrides definitions
+const key_override_t euro      = ko_make_with_layers(MOD_MASK_SHIFT, KC_1, BP_EURO,    1 << LR_ERGOL_BASE);
+
+const key_override_t **key_overrides = (const key_override_t *[]){
+    &euro,
+    NULL
+};
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   /* Keymap VANILLA: (Base Layer) Default Layer
@@ -56,9 +66,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 */
  [LR_ERGOL_BASE] = LAYOUT(
     _______,   _______, _______, _______,  _______,  _______,   _______,  _______,  _______,  _______,   _______,  _______,   _______,   _______,   _______,
-    _______,   _______, _______, _______,  _______,  _______,             _______,  _______,  _______,   _______,  _______,   _______,   _______,   _______,
-    _______,   _______, _______, _______,  _______,  _______,   _______,  _______,  _______,  _______,   _______,  _______,   _______,   _______,   _______,
-    _______,   _______, _______, _______,  _______,  _______,   _______,  _______,  _______,  _______,   _______,  _______,   _______,   _______,   _______,
-    _______,   _______, _______, _______,  _______,  _______,   _______,  _______,  _______,  _______,   _______,  _______,   _______,   _______,
+    _______,   KC_1,    KC_2,    KC3,      KC_4,     KC_5,                KC_6,     KC_7,     KC_8,     KC_9,      KC_0,      _______,   _______,   _______,
+    _______,   KC_Q,    KC_C,    KC_O   ,  KC_P,     KC_W,      KC_J,     KC_M,     KC_D,     _______,   KC_Y,     _______,   _______,   _______,   _______,
+    _______,   KC_A,    KC_S,    KC_E,     KC_N,     KC_F,      _______,  KC_L,     KC_R,     KC_T,      KC_I,     KC_U,      _______,   _______,   _______,
+    _______,   KC_Z,    KC_X,    _______,  KC_V,     KC_B,      _______,  _______,  _______,  _______,   _______,  KC_K,      _______,   _______,
     _______,   _______, _______,           _______,  _______,   _______,  _______,            _______,   _______,  _______,   _______,   _______,   _______)
 };
