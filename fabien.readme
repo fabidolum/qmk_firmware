@@ -1,0 +1,12 @@
+
+
+# sources location
+keyboards/xbows/nature/keymaps/fabidolum
+
+# to compile:
+qmk compile -kb xbows/nature -km fabidolum
+
+# flash
+qmk flash
+# hold ESC down will pluggin the keyboard
+
